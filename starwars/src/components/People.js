@@ -11,12 +11,14 @@ import {
 
 const People = props => {
 	return (
-		<Card className="card text-white bg-primary mb-3">
+		<Card className="text-white bg-primary">
 			<CardBody>
 				<CardTitle>{props.data.name}</CardTitle>
 				<CardSubtitle>{props.data.gender}</CardSubtitle>
 				<CardText>{props.data.url}</CardText>
-				<Button>Button</Button>
+				<a href={props.data.url} target="_blank">
+					<Button>Open</Button>
+				</a>
 			</CardBody>
 		</Card>
 	);
