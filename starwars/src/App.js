@@ -2,6 +2,7 @@ import React from "react";
 import "./App.css";
 import axios from "axios";
 import People from "./components/People";
+import { Button } from "reactstrap";
 
 const App = () => {
 	// Try to think through what state you'll need for this app before starting. Then build out
@@ -14,20 +15,29 @@ const App = () => {
 	const [people, setPeople] = React.useState([]);
 	const [filteredPeople, setFilteredPeople] = React.useState([]);
 	const [search, setSearch] = React.useState("");
+	const [next, setNext] = React.useState(null);
+	const [prev, setPrev] = React.useState(null);
+
+	const [currURL, setCurrURL] = React.useState(
+		"https://swapi.co/api/people/?format=json"
+	);
 
 	React.useEffect(() => {
 		axios
-			.get("https://swapi.co/api/people/?format=json")
+			.get(currURL)
 			.then(response => {
 				return response.data;
 			})
 			.then(data => {
 				console.log(data.results);
+
+				setPrev(data.previous);
+				setNext(data.next);
 				setPeople(data.results);
 				setFilteredPeople(data.results);
 			});
 		return () => {};
-	}, []);
+	}, [currURL]);
 
 	const handleSearch = e => {
 		setSearch(e.target.value);
@@ -42,6 +52,14 @@ const App = () => {
 				}
 			})
 		);
+	};
+
+	const prevHandler = () => {
+		setCurrURL(prev);
+	};
+
+	const nextHandler = () => {
+		setCurrURL(next);
 	};
 	return (
 		<div className="container-fluid App">
@@ -60,6 +78,31 @@ const App = () => {
 					<br />
 				</div>
 			</div>
+			<div className="row">
+				<div className="col-12">
+					{prev && (
+						<Button
+							color="primary"
+							onClick={() => {
+								prevHandler();
+							}}
+						>
+							◀️ Prev
+						</Button>
+					)}{" "}
+					{next && (
+						<Button
+							color="primary"
+							onClick={() => {
+								nextHandler();
+							}}
+						>
+							Next ▶️
+						</Button>
+					)}
+				</div>
+			</div>
+			<br />
 			<div className="row">
 				<div className="col-12">
 					<div className="card-columns">
