@@ -12,6 +12,8 @@ const App = () => {
 	// sync up with, if any.
 
 	const [people, setPeople] = React.useState([]);
+	const [filteredPeople, setFilteredPeople] = React.useState([]);
+	const [search, setSearch] = React.useState("");
 
 	React.useEffect(() => {
 		axios
@@ -22,21 +24,48 @@ const App = () => {
 			.then(data => {
 				console.log(data.results);
 				setPeople(data.results);
+				setFilteredPeople(data.results);
 			});
 		return () => {};
 	}, []);
 
+	const handleSearch = e => {
+		setSearch(e.target.value);
+
+		setFilteredPeople(
+			people.filter(person => {
+				if (
+					person.name.toLocaleLowerCase().indexOf(e.target.value) !=
+					-1
+				) {
+					return person;
+				}
+			})
+		);
+	};
 	return (
-		<div className="container-fluid">
+		<div className="container-fluid App">
 			<div className="row">
 				<div className="col-12">
-					<div className="App">
-						<h1 className="Header">React Wars</h1>
-						<div class="card-columns">
-							{people.map((curr, index) => {
-								return <People data={curr} key={index} />;
-							})}
-						</div>
+					<h1 className="Header">React Wars</h1>
+					<input
+						className="form-control form-control-lg"
+						type="text"
+						placeholder="search by name"
+						value={search}
+						onChange={e => {
+							handleSearch(e);
+						}}
+					/>
+					<br />
+				</div>
+			</div>
+			<div className="row">
+				<div className="col-12">
+					<div className="card-columns">
+						{filteredPeople.map((curr, index) => {
+							return <People data={curr} key={index} />;
+						})}
 					</div>
 				</div>
 			</div>
